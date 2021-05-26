@@ -2,7 +2,7 @@
 const colors = require("colors/safe");
 
 //функция поиска простых чисел
-const findSimpleNumbers = (startNumber, endNumber) => {
+function findSimpleNumbers(startNumber, endNumber) {
     const simpleNumbers = []; //массив простых чисел
 
     for(let i=startNumber; i<=endNumber; i++){
@@ -25,10 +25,10 @@ const findSimpleNumbers = (startNumber, endNumber) => {
         }
     }
     return simpleNumbers;
-};
+}
 
 //Распечатать цветной массив
-const printColorArray = (numbersArray) => {
+function printColorArray (numbersArray) {
     for(let i=0; i<numbersArray.length; i++){
         switch (i%3) {
             case 0: console.log(colors.green(numbersArray[i])); break;
@@ -36,10 +36,10 @@ const printColorArray = (numbersArray) => {
             case 2: console.log(colors.red(numbersArray[i])); break;
         }
     }
-};
+}
 
 //запуск программы
-const run = (startNumber,endNumber) => {
+function run(startNumber,endNumber) {
     if(!Number.isInteger(startNumber) || !Number.isInteger(endNumber) ){
         console.log(colors.red("Ошибка: Одно из введенных Вами значений не является целым числом!"));
         return;
@@ -54,7 +54,7 @@ const run = (startNumber,endNumber) => {
 
     console.log(`"Простые числа между ${startNumber} и  ${endNumber}:`);
     printColorArray(simpleNumbers);
-};
+}
 
 
 //считываем данные из введенных при запуске программы
