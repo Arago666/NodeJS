@@ -3,50 +3,42 @@ const events = require('events');
 // создаем экземпляр Event Emitter-а
 const ee = new events.EventEmitter();
 
-const timerTypes = [
-    {
-        status: 'run',
-        message: 'Таймер работает!'
-    },
-    {
-        status: 'stop',
-        message: 'Таймер завершил работу.'
-    }
-];
+const STATUSES = {
+    ACTIVE: 'active',
+    FINISHED: 'finished'
+};
 
 
 class Timer {
     constructor(date) {
         this.date = date;
         this.status = this.setStatus(date);
+
     }
 
     //установить статус в зависимости от даты
-    setStatus(remainigDate) {
-        let curretDate = new Date();
+    setStatus(date) {
+        const curretDate = new Date();
 
-        //таймер в статусе run
-        if (curretDate < remainigDate) {
-            return timerTypes[0].status;
+        if (curretDate < date) {
+            return STATUSES['ACTIVE'];
         }
-
-        //таймер в статусе stop
-        return timerTypes[1].status;
+        return STATUSES['FINISHED'];
     }
     //Завершить работу таймера
-    changeStatusToSecondType() {
-        this.status = timerTypes[1].status;
+    changeStatusToFinished() {
+        this.status = STATUSES['FINISHED'];
     }
 
     //проверка, идет ли таймер
-    statusIsRun(){
-        return this.status == timerTypes[0].status;
+    isStatusActive(){
+        return this.status == STATUSES['ACTIVE'];
     }
 
     //Получить оставшееся время в секундах
-    getRemainingTimeInSec() {
-        let curretDate = new Date();
-        return parseInt((this.date-curretDate)/1000);
+    getRemainingTime() {
+        const curretDate = new Date();
+        return this.date-curretDate;
     }
 }
 
@@ -54,7 +46,7 @@ class Timer {
 function stringToDate(stringDate)
 {
     //формат даты час-день-месяц-год
-    let arrayDate = stringDate.split("-");
+    const arrayDate = stringDate.split("-");
     const correctDate = new Date(
         // arrayDate[3], //stringDate[3] - год
         // arrayDate[2]-1, //stringDate[2] - месяц
@@ -65,7 +57,7 @@ function stringToDate(stringDate)
         arrayDate[3]-1, //stringDate[2] - месяц
         arrayDate[2], //stringDate[1] - день
         arrayDate[1], //stringDate[0] - час
-        arrayDate[0] //stringDate[0] - час
+        arrayDate[0] //stringDate[0] - минута
     );
     return correctDate;
 }
@@ -86,8 +78,8 @@ function printEndOfTime(timer) {
             console.log("Таймеры:");
 
             for(let i = 0; i<timer.length; i++){
-                if( timer[i].statusIsRun() ){
-                    console.log(`Таймер ${i+1}: осталось: `,timer[i].getRemainingTimeInSec(), ' сек.');
+                if( timer[i].isStatusActive() ){
+                    console.log(`Таймер ${i+1}: осталось: `,parseInt(timer[i].getRemainingTime()/1000), ' сек.');
                     continue;
                 }
                 console.log(`Таймер ${i+1} завершил свою работу!`);
@@ -102,7 +94,7 @@ function run(){
 
     //обрабатываем событие завершения работы таймера - меняем статус
     ee.on("stop_timer", (params)=>{
-        params.changeStatusToSecondType();
+        params.changeStatusToFinished();
     });
 
     //Получаем введенные даты
@@ -114,10 +106,10 @@ function run(){
         timer[i] = new Timer(enteredDates[i]);
 
         //если таймер не завершен - устанавливаем событие на звершения таймера, когда выйдет время
-        if(timer[i].statusIsRun()){
+        if( timer[i].isStatusActive() ){
             setTimeout( () => {
                 ee.emit(`stop_timer`, timer[i]);
-            }, timer[i].getRemainingTimeInSec()*1000);
+            }, timer[i].getRemainingTime());
         }
     }
 
