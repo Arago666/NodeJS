@@ -6,6 +6,7 @@
   "scripts": {
     "lesson1": "node lesson1.js",
     "lesson2": "node lesson2_02.js",
+    "lesson3": "node lesson3.js",
     "start": "nodemon helloworld.js",
     "dev": "node colors.js",
     "test": "echo \"Error: no test specified\" && exit 1"
